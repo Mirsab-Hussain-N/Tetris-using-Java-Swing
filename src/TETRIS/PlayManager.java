@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.Random;
 
 //FOR DRAWINGS, UI AND SETTINGS 
 public class PlayManager {
@@ -39,9 +40,27 @@ public class PlayManager {
         MINO_START_Y = top_y + Block.SIZE;
 
         //set starting Mino
-        currentMino = new Mino_L1();
+        // currentMino = pickMino();       //gets a random mino
+        currentMino = new Mino_Z1();
         currentMino.setXY(MINO_START_X, MINO_START_Y);
     }
+
+    private Mino pickMino(){
+        //picks a random mino
+        Mino mino = null;
+        int i = new Random().nextInt(7);
+        switch (i) {
+            case 0: mino = new Mino_L1(); break;
+            case 1: mino = new Mino_L2(); break;
+            case 2: mino = new Mino_Square(); break;
+            case 3: mino = new Mino_Bar(); break;
+            case 4: mino = new Mino_T(); break;
+            case 5: mino = new Mino_Z1(); break;
+            case 6: mino = new Mino_Z2(); break;
+        }
+        return mino; 
+    }
+
     public void update(){
         currentMino.update();
     }
