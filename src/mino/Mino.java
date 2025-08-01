@@ -108,21 +108,26 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
 
         //SOFTDROP
         if(KeyHandler.softDrop){
-            for (int i = 0; i < 4; i++) {
-                b[i].y += Block.SIZE;
+            if(bottomCollision == false){
+                for (int i = 0; i < 4; i++) {
+                    b[i].y += Block.SIZE;
+                }
+                autoDropCounter = 0;
             }
-            autoDropCounter = 0;
+            
             KeyHandler.softDrop = false;
         }
 
         if(KeyHandler.hardDrop){
-            while(true){
-                for (int i = 0; i < 4; i++) {
-                    b[i].y += Block.SIZE;
+            if(bottomCollision == false){
+                while(true){
+                    for (int i = 0; i < 4; i++) {
+                        b[i].y += Block.SIZE;
+                    }
+                    // Break after some fake depth (temporary until collision check)
+                    // Replace this with a real "collidesBelow()" check later.
+                    if (b[0].y > 575) break;  // temporary
                 }
-                // Break after some fake depth (temporary until collision check)
-                // Replace this with a real "collidesBelow()" check later.
-                if (b[0].y > 600) break;  // temporary
             }
             KeyHandler.hardDrop = false;
         }
