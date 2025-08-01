@@ -9,6 +9,8 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
     public Block tempB[] = new Block[4];
     int autoDropCounter = 0;
     public int direction = 1; //THERE ARE 4 DIRECTIONS (1/2/3/4)
+    boolean leftCollision, bottomCollision;
+    boolean rightCollision = false;
 
 
     public void create(Color c){
@@ -41,6 +43,37 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
     public void getDirection2(){}
     public void getDirection3(){}
     public void getDirection4(){}
+
+    public void checkMovementCollision(){
+        leftCollision = false;
+        rightCollision = false;
+        bottomCollision = false;
+
+        //check frame collision
+        //left wall
+        for(int i = 0; i < b.length; i++){
+            if(b[i].x == PlayManager.left_x){
+                leftCollision = true;
+            }
+        }
+        //right wall
+        for(int i = 0; i < b.length; i++){
+            if(b[i].x + Block.SIZE == PlayManager.right_x){
+                rightCollision = true;
+            }
+        }
+        //bottom floor
+        for(int i = 0; i < b.length; i++){
+            if(b[i].y + Block.SIZE == PlayManager.bottom_y){
+                bottomCollision = true;
+            }
+        }
+
+
+    }
+    public void checkRotationCollision(){
+
+    }
 
     public void update(){
         //MOVE THE MINOS
@@ -75,6 +108,7 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
             }
             KeyHandler.rotateCW = false;
         }
+        checkMovementCollision();
 
         // COUNTER-CLOCKWISE ROTATION
         if (KeyHandler.rotateCCW) {
@@ -98,19 +132,22 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
             KeyHandler.rotate180 = false;
         }
         if(KeyHandler.leftPressed){
-            b[0].x -= Block.SIZE;
-            b[1].x -= Block.SIZE;
-            b[2].x -= Block.SIZE;
-            b[3].x -= Block.SIZE;
-
+            if(leftCollision == false){
+                b[0].x -= Block.SIZE;
+                b[1].x -= Block.SIZE;
+                b[2].x -= Block.SIZE;
+                b[3].x -= Block.SIZE;
+            }
             KeyHandler.leftPressed = false;
+            
         }
         if(KeyHandler.rightPressed){
-            b[0].x += Block.SIZE;
-            b[1].x += Block.SIZE;
-            b[2].x += Block.SIZE;
-            b[3].x += Block.SIZE;
-
+            if(rightCollision == false){
+                b[0].x += Block.SIZE;
+                b[1].x += Block.SIZE;
+                b[2].x += Block.SIZE;
+                b[3].x += Block.SIZE;
+            }
             KeyHandler.rightPressed = false;
         }
 

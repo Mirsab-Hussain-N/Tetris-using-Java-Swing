@@ -40,8 +40,8 @@ public class PlayManager {
         MINO_START_Y = top_y + Block.SIZE;
 
         //set starting Mino
-        // currentMino = pickMino();       //gets a random mino
-        currentMino = new Mino_Z1();
+        currentMino = pickMino();       //gets a random mino
+        // currentMino = new Mino_Z1();
         currentMino.setXY(MINO_START_X, MINO_START_Y);
     }
 
