@@ -5,7 +5,7 @@ import java.awt.event.*;
 public class KeyHandler implements KeyListener{
 
     public static boolean leftPressed, rightPressed;
-    public static boolean rotateCW, rotateCCW, rotate180, softDrop, hardDrop;
+    public static boolean rotateCW, rotateCCW, rotate180, softDrop, hardDrop, pausePressed;
 
 
     @Override
@@ -37,6 +37,13 @@ public class KeyHandler implements KeyListener{
         }
         if(code == KeyEvent.VK_S){
             hardDrop = true;
+        }
+        if(code == KeyEvent.VK_SPACE){
+            if(pausePressed){
+                pausePressed = false;
+            }else{
+                pausePressed = true;
+            }
         }
 
     }
