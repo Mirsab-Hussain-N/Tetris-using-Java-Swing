@@ -9,8 +9,10 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
     public Block tempB[] = new Block[4];
     int autoDropCounter = 0;
     public int direction = 1; //THERE ARE 4 DIRECTIONS (1/2/3/4)
-    boolean leftCollision, bottomCollision, rightCollision;
+    public boolean leftCollision, bottomCollision, rightCollision;
     public boolean active = true;
+    public boolean deactivating; 
+    int deactivateCounter = 0;
 
 
     public void create(Color c){
@@ -55,6 +57,9 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
         rightCollision = false;
         bottomCollision = false;
 
+        //check static block collision.
+        checkStaticBlockCollision();
+
         //check frame collision
         //left wall
         for(int i = 0; i < b.length; i++){
@@ -82,6 +87,9 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
         rightCollision = false;
         bottomCollision = false;
 
+        //check static block collision.
+        checkStaticBlockCollision();
+
         //check frame collision
         //left wall
         for(int i = 0; i < b.length; i++){
@@ -103,7 +111,40 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
         }
     }
 
+    public void checkStaticBlockCollision(){
+        for(int i = 0; i < PlayManager.staticBlocks.size(); i++){
+            int targetX = PlayManager.staticBlocks.get(i).x;
+            int targetY = PlayManager.staticBlocks.get(i).y;
+
+            //check down;
+            for(int j = 0; j < b.length; j++){
+                if(b[j].y + Block.SIZE == targetY  && b[j].x == targetX){
+                    bottomCollision = true;
+                }
+            }
+
+            //check left
+            for(int j = 0; j < b.length; j++){
+                if(b[j].x - Block.SIZE  == targetX && b[j].y == targetY){
+                    leftCollision = true;
+                }
+            }
+
+            //check right
+            for(int j = 0; j < b.length; j++){
+                if(b[j].x + Block.SIZE == targetX && b[j].y == targetY){
+                    rightCollision = true;
+                }
+            }
+        }
+    }
+
     public void update(){
+
+        if(deactivating){
+            deactivating();
+        }
+
         //MOVE THE MINOS
 
         //SOFTDROP
@@ -118,17 +159,25 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
             KeyHandler.softDrop = false;
         }
 
-        if(KeyHandler.hardDrop){
-            if(bottomCollision == false){
-                while(true){
-                    for (int i = 0; i < 4; i++) {
-                        b[i].y += Block.SIZE;
-                    }
-                    // Break after some fake depth (temporary until collision check)
-                    // Replace this with a real "collidesBelow()" check later.
-                    if (b[0].y > 575) break;  // temporary
+        if (KeyHandler.hardDrop) {
+            while (true) {
+                // Temporarily move down by one
+                for (int i = 0; i < 4; i++) {
+                    b[i].y += Block.SIZE;
+                }
+
+                checkMovementCollision();  // check collision *after* moving
+
+                if (bottomCollision) {
+                    // Move back up by one (undo last step)
+                    // for (int i = 0; i < 4; i++) {
+                    //     b[i].y -= Block.SIZE;
+                    // }
+                    active = false;  // lock the piece
+                    break;
                 }
             }
+
             KeyHandler.hardDrop = false;
         }
 
@@ -185,7 +234,9 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
         }
 
         if(bottomCollision){
-            active = false;
+            deactivating = true;
+
+            // active = false;
         }else{
              autoDropCounter++;  //increases every frame
             if(autoDropCounter == PlayManager.dropInterval){
@@ -197,10 +248,24 @@ public class Mino {         //SUPER CLASS FOR ALL OTHER MINOS
                 autoDropCounter = 0;
             }
         }
-
-
-        
     }
+
+    public void deactivating(){
+        deactivateCounter++;
+
+        //Wait 45 frames until deactivates
+
+        if(deactivateCounter == 45){
+            deactivateCounter = 0;
+            checkMovementCollision(); //check if bottom is still hitting
+
+            //if the bottom is still hitting after 45, deactivate the mino
+            if(bottomCollision){
+                active = false;
+            }
+        }
+    }
+
     public void draw(Graphics2D g2){
 
         // g2.setColor(b[0].c);
